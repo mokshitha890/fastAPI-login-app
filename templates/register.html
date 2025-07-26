@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Page</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <h2>Register</h2>
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit">Register</button>
+        </form>
+        <p id="message"></p>
+        <p>Already have an account? <a href="/">Login here</a></p>
+    </div>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password }),
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    // Display error message from backend
+                    document.getElementById('message').textContent =
+                        data.detail?.message || 'Registration failed';
+                    return;
+                }
+
+                document.getElementById('message').textContent = data.message || 'Success';
+
+                // Redirect after success
+                setTimeout(() => {
+                    window.location.href = "/";
+                }, 1500);
+
+            } catch (error) {
+                document.getElementById('message').textContent =
+                    'Error: Could not connect to server';
+            }
+        });
+    </script>
+
+</body>
+
+</html>
