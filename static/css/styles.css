@@ -1,0 +1,136 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f2f5;
+    margin: 0;
+    padding: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 360px;
+}
+
+h2 {
+    text-align: center;
+    color: #1a73e8;
+    margin-bottom: 1rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #333;
+    font-weight: 600;
+}
+
+input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #1a73e8;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #1557b0;
+}
+
+#message {
+    text-align: center;
+    font-weight: bold;
+    margin-top: 1rem;
+    color: #d32f2f;
+    /* red for error */
+}
+
+.success-message {
+    color: green;
+}
+
+ul#suggestions {
+    margin-top: 0.8rem;
+    padding-left: 1.2rem;
+    color: #1a73e8;
+    font-size: 0.95rem;
+}
+
+ul#suggestions li {
+    margin-bottom: 0.3rem;
+    list-style: disc;
+}
+
+.success-container {
+    display: none;
+    text-align: center;
+    padding: 2rem;
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    max-width: 300px;
+    margin: auto;
+    margin-top: 3rem;
+    overflow: hidden;
+}
+
+.success-container img {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 1rem;
+    object-fit: contain;
+}
+
+.success-container h3 {
+    margin: 1rem 0 0.5rem;
+    color: #2b6cb0;
+}
+
+.success-container p {
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+.success-container button {
+    background-color: #2b6cb0;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+#suggestions {
+    margin-top: 10px;
+    padding-left: 20px;
+    font-size: 0.95rem;
+}
+
+#suggestions li {
+    color: blue;
+    list-style-type: disc;
+}
