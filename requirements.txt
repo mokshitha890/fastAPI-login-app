@@ -9,9 +9,8 @@ bcrypt==3.2.0
 pymongo==4.5.0
 motor==3.3.1
 # openai==0.27.8
-google-generativeai==0.2.0
-
-
+# google-generativeai
+google-genai
 
 #venv\Scripts\activate
 
