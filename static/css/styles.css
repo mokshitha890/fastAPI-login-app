@@ -33,6 +33,7 @@ label {
     margin-bottom: 0.5rem;
     color: #333;
     font-weight: 600;
+
 }
 
 input {
@@ -133,4 +134,24 @@ ul#suggestions li {
 #suggestions li {
     color: blue;
     list-style-type: disc;
+}
+
+.usernameSuggestions {
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    padding: 5px;
+    font-size: smaller;
+}
+
+.suggestion-item {
+    cursor: pointer;
+    color: #80afec;
+    padding: 0.2rem 0;
+
+    hover {
+        background-color: #e8f0fe;
+        border-radius: 4px;
+        color: #1959ad
+    }
 }

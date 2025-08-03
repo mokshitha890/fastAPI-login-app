@@ -43,7 +43,7 @@ async def login(user: User):
 async def register(user: User):
     return await register_user(user)
 
-@app.get("/test-openai")
+@app.get("/suggest_usernames")
 async def get_username_suggestions(name: str = Query(..., min_length=3)):
     try:
         suggestions = await suggest_usernames(name)

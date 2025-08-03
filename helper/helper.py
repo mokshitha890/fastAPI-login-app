@@ -71,7 +71,7 @@ async def register_user(user: User):
     return {"message": "User registered successfully"}
 
 
-async def suggest_usernames(username: str): 
+async def suggest_usernames(username: str):  
     print("v5.0 - Suggesting usernames for:", username)
     prompt = (
         f"Suggest 3 creative and likely unused usernames based on the name '{username}' "
