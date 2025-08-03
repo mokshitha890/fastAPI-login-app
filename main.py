@@ -29,11 +29,16 @@ async def shutdown_db():
 # Routes
 @app.get("/", response_class=HTMLResponse)
 async def get_login(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse("home.html", {"request": request})
 
 @app.get("/register", response_class=HTMLResponse)
 async def get_register(request: Request):
     return templates.TemplateResponse("register.html", {"request": request})
+
+
+@app.get("/signin", response_class=HTMLResponse)
+async def get_register(request: Request):
+    return templates.TemplateResponse("login.html", {"request": request})
 
 @app.post("/login")
 async def login(user: User):

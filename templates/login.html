@@ -54,8 +54,10 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    document.getElementById('loginContainer').style.display = 'none';
-                    document.getElementById('successContainer').style.display = 'block';
+                    // document.getElementById('loginContainer').style.display = 'none';
+                    // document.getElementById('successContainer').style.display = 'block';
+                    localStorage.setItem('userName', username);
+                    window.location.href = '/';
                 } else {
                     document.getElementById('message').style.color = 'red';
                     document.getElementById('message').textContent = data.detail?.message || 'Login failed';
