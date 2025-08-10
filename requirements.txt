@@ -11,6 +11,7 @@ motor==3.3.1
 # openai==0.27.8
 # google-generativeai
 google-genai
+uuid
 
 #venv\Scripts\activate
 

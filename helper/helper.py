@@ -13,6 +13,7 @@ load_dotenv()
 # import google.generativeai as genai
 from google import genai
 from google.genai import types
+from datetime import datetime, timedelta, timezone
 
 # Set API key
 # genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
@@ -31,6 +32,8 @@ if not MONGODB_URL:
 client = AsyncIOMotorClient(MONGODB_URL)
 db = client["login_db"]
 users_collection = db["users"]
+sessions_collection = db["sessions"]
+user_bio_collection = db["user_bio"]
 # Password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -38,6 +41,13 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 class User(BaseModel):
     username: str
     password: str
+
+class UserBio(BaseModel):
+    username : str
+    firstname: str
+    lastname: str
+    age: int
+    bio: str
 
 # Initialize DB
 async def init_db():
@@ -112,57 +122,9 @@ async def suggest_usernames(username: str):
             print("Gemini suggestions:", suggestions)
             return suggestions[:3]
 
-        # Try to parse usernames from JSON-like response
-        # try:
-        #     import json
-        #     parsed = json.loads(response_text)
-        #     if isinstance(parsed, list):
-        #         return parsed[:3]
-        # except Exception as json_err:
-        #     print("JSON parsing fallback:", json_err)
-
-        # # Fallback: regex or line split
-        # matches = re.findall(r"\b[\w\d_.-]{3,}\b", response_text)
-        # return matches[:3] if matches else ["BackupUser01", "FallbackName02", "SafeHandle03"]
-
     except Exception as e:
         print("Gemini error:", e)
         return ["BackupUser01", "FallbackName02", "SafeHandle03"]
-
-
-
-
-# async def suggest_usernames_old(username: str):
-#     prompt = (
-#         f"Suggest 3 creative and likely unused usernames based on the name '{username}' in json formate dont give any other text give only usernames . "
-#         f"Return them as a plain list separated by newlines."
-#     )
-
-#     print("Calling Gemini with prompt:", prompt)
-
-#     try:
-#         model = genai.GenerativeModel("gemini-pro")
-#         response = await model.generate_content(prompt)
-
-#         if not response or not response.text.strip():
-#             return ["TryGemini001", "UserXGen", "AltHandleGem"]
-
-#         print("Gemini raw response:", response.text)
-
-#         # Try regex to extract usernames from the text
-#         matches = re.findall(r"\*\*?([\w\d_.-]+)\*\*?", response.text)
-#         if matches:
-#             return matches
-
-#         # Fallback: extract first 3 non-empty lines
-#         suggestions = response.text.strip().split("\n")
-#         print(suggestions)
-#         return [s.strip("-•. ").split()[0] for s in suggestions if s.strip()][:3]
-
-#     except Exception as e:
-#         print("Gemini error:", e)
-#         return ["BackupUser01", "FallbackName02", "SafeHandle03"]
-
 
 
 # Login logic
@@ -181,3 +143,47 @@ async def login_user(user: User):
         raise HTTPException(status_code=400, detail={"message": "Invalid password"})
 
     return {"message": "Login successful"}
+
+## await sessions_collection.insert_one({"session_id": session_id, "username": user.username})
+async def store_session(session_id: str, username: str,expires_in_sec: int = 3600):
+    expires_at = datetime.now(timezone.utc) + timedelta(seconds=expires_in_sec)
+    session_data = {
+        "session_id": session_id,
+        "username": username,
+        "expires_at": expires_at
+    }
+    await sessions_collection.insert_one(session_data)
+    print(f"Session stored: {session_data}")
+
+async def add_user_bio(userBio: UserBio):
+    bio_dict = userBio.model_dump()
+    user_record = await user_bio_collection.find_one({"username": userBio.username})
+    if user_record:
+        await user_bio_collection.update_one({"username": userBio.username}, {"$set": bio_dict})
+    else:
+        await user_bio_collection.insert_one(bio_dict)
+    return {"message": "User bio added successfully"}
+
+async def checkUserSession(session_id: str):
+    session_data = await sessions_collection.find_one({"session_id": session_id})
+    return session_data
+
+async def get_user_bio(username: str):
+    user_record = await user_bio_collection.find_one({"username": username})
+    if not user_record:
+        raise HTTPException(status_code=404, detail="User bio not found")
+    return user_record
+
+async def remove_session(session_id: str):
+    result = await sessions_collection.delete_one({"session_id": session_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Session not found")
+    return {"message": "Session removed successfully"}
+
+async def check_session(session_id: str):
+    session_data = await sessions_collection.find_one({"session_id": session_id})
+    if not session_data:
+        raise HTTPException(status_code=401, detail="Unauthorized: Invalid session")
+    return session_data
+    
+    
