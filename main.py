@@ -1,13 +1,13 @@
 # main.py
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse,RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi import Query
 from fastapi.responses import Response
 from uuid import uuid4
 
-from helper.helper import User,UserBio,checkUserSession,add_user_bio,remove_session,get_user_bio,check_session, init_db, close_db, login_user, register_user,suggest_usernames,store_session
+from helper.helper import User,UserBio,checkUserSession,add_user_bio,register_and_create_session, sessions_collection, remove_session,get_user_bio,check_session, init_db, close_db, login_user, register_user,suggest_usernames,store_session
 
 app = FastAPI()
 
@@ -58,8 +58,19 @@ async def login(user: User,response: Response):
     return {"message": "Login successful"}
 
 @app.post("/register")
-async def register(user: User):
-    return await register_user(user)
+async def register(user: User,response: Response):
+      # Call combined register + session logic
+    session_id = await register_and_create_session(user, sessions_collection)
+
+    # Set cookie
+    response.set_cookie(
+        key="session_id",
+        value=session_id,
+        max_age=3600,
+        httponly=True
+    )
+
+    return {"message": "Registered and logged in successfully"}
 
 @app.get("/suggest_usernames")
 async def get_username_suggestions(name: str = Query(..., min_length=3)):

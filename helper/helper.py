@@ -3,6 +3,8 @@ from fastapi import HTTPException
 from pydantic import BaseModel
 from motor.motor_asyncio import AsyncIOMotorClient
 from passlib.context import CryptContext
+from uuid import uuid4
+from datetime import datetime, timedelta, timezone
 import os
 import re
 from dotenv import load_dotenv
@@ -126,6 +128,23 @@ async def suggest_usernames(username: str):
         print("Gemini error:", e)
         return ["BackupUser01", "FallbackName02", "SafeHandle03"]
 
+async def register_and_create_session(user: User, sessions_collection, expires_in_sec: int = 3600):
+    # Step 1: Register user
+    result = await register_user(user)
+
+    # Step 2: Create session
+    session_id = f"{user.username}_{str(uuid4())}"
+    expires_at = datetime.now(timezone.utc) + timedelta(seconds=expires_in_sec)
+
+    session_data = {
+        "session_id": session_id,
+        "username": user.username,
+        "expires_at": expires_at
+    }
+
+    await sessions_collection.insert_one(session_data)
+
+    return session_id
 
 # Login logic
 async def login_user(user: User):

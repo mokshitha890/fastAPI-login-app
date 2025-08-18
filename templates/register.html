@@ -137,12 +137,17 @@
                     return;
                 }
 
-                // ✅ Success
+                // ✅ Success: auto-login handled by backend (cookie set)
                 msg.style.color = "green";
-                msg.textContent = data.message || "Registered successfully!";
+                msg.textContent = data.message || "Registered successfully! Redirecting...";
+
+                // Save username in localStorage (so home can use it)
+                localStorage.setItem("userName", username);
+
+                // Redirect to home
                 setTimeout(() => {
                     window.location.href = "/";
-                }, 1500);
+                }, 1000);
 
             } catch (error) {
                 console.error("Registration error:", error);
